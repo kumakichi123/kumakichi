@@ -1,44 +1,53 @@
 <title>CuO₂面とギャップ対称性</title>
 <style>
-/* Layout: full-bleed 3D stage with a compact control panel overlaid at top-left */
+/* Layout: full-bleed 3D crystal with a compact control panel overlaid at top-left */
 :root{
-  --bg:#f3f5f8; --fg:#1b2230; --muted:#5b6475; --panel:rgba(255,255,255,.88); --line:#d5dae3;
-  --cu:#2c6fbb; --o:#d9483b; --plus:#d9483b; --minus:#2c6fbb;
+  --bg:#f3f5f8; --fg:#1b2230; --muted:#5b6475; --panel:rgba(255,255,255,.9); --line:#d5dae3;
+  --cu:#2c6fbb; --o:#d9483b; --ba:#2f9e6e; --y:#c79a1e;
+  --pl:#2c6fbb; --fa:#d9483b; --fb:#8e44ad; --fc:#2f9e6e;
   --ui:"Noto Sans JP",system-ui,sans-serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.88);--line:#2f3644;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.88);--line:#2f3644;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.9);--line:#2f3644;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.9);--line:#2f3644;color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--ui);overflow:hidden}
 #stage{position:fixed;inset:0}
-.panel{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:340px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;backdrop-filter:blur(6px)}
+.panel{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:350px;max-height:calc(100% - 24px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:9px;backdrop-filter:blur(6px)}
 h1{font-size:16px;margin:0;text-wrap:balance}
-.row{display:flex;flex-wrap:wrap;gap:6px}
-button{font:inherit;font-size:13px;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
-button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-button:focus-visible,input:focus-visible{outline:2px solid var(--cu);outline-offset:2px}
-label{font-size:13px;display:flex;align-items:center;gap:6px}
+h2{font-size:12px;margin:2px 0 0;color:var(--muted);letter-spacing:.04em}
+label{font-size:13px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
+input:focus-visible{outline:2px solid var(--cu);outline-offset:2px}
 p{margin:0;font-size:12.5px;line-height:1.6;color:var(--muted)}
 .lg{display:flex;gap:12px;font-size:12.5px;flex-wrap:wrap}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:2px;flex:none;margin-top:3px}
+details summary{cursor:pointer;font-size:13px}
 </style>
 
 <div id="stage"></div>
 <div class="panel">
-  <h1>CuO₂面とギャップの形（3D）</h1>
-  <div class="row" role="group" aria-label="ギャップ">
-    <button id="bd" aria-pressed="true">d波</button>
-    <button id="bs" aria-pressed="false">s波</button>
-    <button id="bn" aria-pressed="false">ギャップ非表示</button>
-  </div>
-  <label><input type="checkbox" id="lat" checked> 結晶格子を表示（CuO₂面×2層）</label>
+  <h1>YBa₂Cu₃O₇ の結晶とCuO₂面</h1>
   <div class="lg">
     <span><i class="dot" style="background:var(--cu)"></i>Cu</span>
     <span><i class="dot" style="background:var(--o)"></i>O</span>
-    <span><i class="dot" style="background:var(--plus)"></i>ギャップ＋</span>
-    <span><i class="dot" style="background:var(--minus)"></i>ギャップ−</span>
+    <span><i class="dot" style="background:var(--ba)"></i>Ba</span>
+    <span><i class="dot" style="background:var(--y)"></i>Y</span>
   </div>
-  <p id="desc"></p>
+  <h2>層</h2>
+  <label><input type="checkbox" id="tPl" checked><i class="sw" style="background:var(--pl)"></i>CuO₂面（超伝導を担う原子1枚分の層）</label>
+  <label><input type="checkbox" id="tOther" checked>Ba・Y・Cu–O鎖（CuO₂面の間を埋める層）</label>
+  <h2>論文に出てくる結晶の「面」</h2>
+  <label><input type="checkbox" id="tC"><i class="sw" style="background:var(--fc)"></i>ab面（c面, (001)）：c軸に垂直。CuO₂面と平行</label>
+  <label><input type="checkbox" id="tA"><i class="sw" style="background:var(--fa)"></i>a面（(100)）：a軸に垂直な側面</label>
+  <label><input type="checkbox" id="tB"><i class="sw" style="background:var(--fb)"></i>b面（(010)）：b軸に垂直な側面</label>
+  <details>
+    <summary>なぜ「2次元」と言うのか</summary>
+    <p>結晶そのものは3次元です。ただ、超伝導を担う電子はほぼCuO₂面の中だけを動き、c軸方向へはほとんど移れません。そのため電子の振る舞いは2次元的（擬2次元）になります。</p>
+  </details>
+  <details>
+    <summary>a面とb面が重要な理由</summary>
+    <p>d波ギャップは、a方向に動く電子とb方向に動く電子で符号が逆です。a面とb面に別々に電極を付けて超伝導の位相差を測ると、s波とd波を区別できます。YBCOでは、b軸方向にだけCu–O鎖が伸びているため a≠b です。</p>
+  </details>
   <p>ドラッグで回転、ホイール／ピンチで拡大縮小。</p>
 </div>
 
@@ -47,85 +56,78 @@ p{margin:0;font-size:12.5px;line-height:1.6;color:var(--muted)}
 <script>
 const css=getComputedStyle(document.documentElement);
 const C=n=>new THREE.Color(css.getPropertyValue(n).trim());
-const stage=document.getElementById('stage');
+const hex=n=>'#'+C(n).getHexString();
 const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-stage.appendChild(renderer.domElement);
+document.getElementById('stage').appendChild(renderer.domElement);
 const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(40,1,0.1,200);
-camera.position.set(9,-11,8); camera.up.set(0,0,1);
+const camera=new THREE.PerspectiveCamera(38,1,0.1,400);
+camera.up.set(0,0,1);
 const controls=new THREE.OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true; controls.target.set(0,0,0.6);
+controls.enableDamping=true;
 scene.add(new THREE.AmbientLight(0xffffff,.55));
-const dl=new THREE.DirectionalLight(0xffffff,.75); dl.position.set(5,-6,10); scene.add(dl);
+const dl=new THREE.DirectionalLight(0xffffff,.75); dl.position.set(10,-14,20); scene.add(dl);
 
-// --- lattice: two CuO2 planes stacked along c (z) ---
-const lattice=new THREE.Group(); scene.add(lattice);
-const s=1.6, N=2, layers=[0,2.6];
-const cuM=new THREE.MeshStandardMaterial({color:C('--cu'),roughness:.4});
-const oM=new THREE.MeshStandardMaterial({color:C('--o'),roughness:.4});
-const bondM=new THREE.MeshStandardMaterial({color:0x9aa3b2,roughness:.6});
-const cuG=new THREE.SphereGeometry(.28,24,16), oG=new THREE.SphereGeometry(.17,20,12);
-function bond(a,b){const d=new THREE.Vector3().subVectors(b,a);const g=new THREE.CylinderGeometry(.05,.05,d.length(),8);const m=new THREE.Mesh(g,bondM);m.position.copy(a).addScaledVector(d,.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());lattice.add(m)}
-for(const z of layers)for(let i=-N;i<=N;i++)for(let j=-N;j<=N;j++){
-  const p=new THREE.Vector3(i*s,j*s,z);
-  const cu=new THREE.Mesh(cuG,cuM);cu.position.copy(p);lattice.add(cu);
-  if(i<N){const o=new THREE.Mesh(oG,oM);o.position.set(p.x+s/2,p.y,z);lattice.add(o);bond(p,new THREE.Vector3(p.x+s,p.y,z))}
-  if(j<N){const o=new THREE.Mesh(oG,oM);o.position.set(p.x,p.y+s/2,z);lattice.add(o);bond(p,new THREE.Vector3(p.x,p.y+s,z))}
+// YBa2Cu3O7 (Pmmm), lattice constants in Å
+const A=3.82,B=3.89,Cc=11.68, NX=2, NY=2;
+const basis=[
+ ['Y',.5,.5,.5],['Ba',.5,.5,.184],['Ba',.5,.5,.816],
+ ['Cu1',0,0,0],['Cu2',0,0,.355],['Cu2',0,0,.645],
+ ['O1',0,.5,0],                                   // chain oxygen (along b)
+ ['O2',.5,0,.378],['O2',.5,0,.622],['O3',0,.5,.377],['O3',0,.5,.623], // CuO2-plane oxygen
+ ['O4',0,0,.159],['O4',0,0,.841]];                // apical oxygen
+const atoms=[], eps=1e-6;
+for(let i=-1;i<=NX;i++)for(let j=-1;j<=NY;j++)for(let k=-1;k<=1;k++)for(const [t,x,y,z] of basis){
+  const fx=x+i,fy=y+j,fz=z+k;
+  if(fx<-eps||fx>NX+eps||fy<-eps||fy>NY+eps||fz<-eps||fz>1+eps)continue;
+  atoms.push({t,p:new THREE.Vector3(fx*A,fy*B,fz*Cc)});
 }
+const center=new THREE.Vector3(NX*A/2,NY*B/2,Cc/2);
+controls.target.copy(center);
+camera.position.set(center.x+22,center.y-26,center.z+10);
 
-// --- axes ---
-function label(t,col){const c=document.createElement('canvas');c.width=128;c.height=64;const x=c.getContext('2d');x.font='bold 40px sans-serif';x.fillStyle=col;x.textAlign='center';x.textBaseline='middle';x.fillText(t,64,32);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));sp.scale.set(1.4,.7,1);return sp}
-const fg='#'+C('--fg').getHexString();
-[[1,0,0,'a軸'],[0,1,0,'b軸'],[0,0,1,'c軸']].forEach(([x,y,z,t])=>{
-  const dir=new THREE.Vector3(x,y,z), L=z?5.2:4.8;
-  const o=new THREE.Vector3(-N*s-0.9,-N*s-0.9,0);
-  scene.add(new THREE.ArrowHelper(dir,o,L,C('--fg'),.4,.22));
-  const l=label(t,fg);l.position.copy(o).addScaledVector(dir,L+.5);scene.add(l);
+const mat=n=>new THREE.MeshStandardMaterial({color:C(n),roughness:.4});
+const M={Cu:mat('--cu'),O:mat('--o'),Ba:mat('--ba'),Y:mat('--y')};
+const G={Cu:new THREE.SphereGeometry(.42,24,16),O:new THREE.SphereGeometry(.3,20,12),Ba:new THREE.SphereGeometry(.62,24,16),Y:new THREE.SphereGeometry(.55,24,16)};
+const planeG=new THREE.Group(), otherG=new THREE.Group(); scene.add(planeG,otherG);
+const inPlane=a=>a.t==='Cu2'||a.t==='O2'||a.t==='O3';
+for(const a of atoms){const el=a.t.replace(/\d/,'');const m=new THREE.Mesh(G[el],M[el]);m.position.copy(a.p);(inPlane(a)?planeG:otherG).add(m)}
+// Cu–O bonds (< 2.1 Å)
+const bondM=new THREE.MeshStandardMaterial({color:0x9aa3b2,roughness:.6});
+for(const c of atoms)if(c.t.startsWith('Cu'))for(const o of atoms)if(o.t.startsWith('O')){
+  const d=c.p.distanceTo(o.p); if(d>2.1)continue;
+  const v=new THREE.Vector3().subVectors(o.p,c.p);
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,d,8),bondM);
+  m.position.copy(c.p).addScaledVector(v,.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());
+  (inPlane(c)&&inPlane(o)?planeG:otherG).add(m);
+}
+// translucent sheets marking the two CuO2 planes
+const sheetM=new THREE.MeshBasicMaterial({color:C('--pl'),transparent:true,opacity:.18,side:THREE.DoubleSide,depthWrite:false});
+for(const z of [.36,.64]){const s=new THREE.Mesh(new THREE.PlaneGeometry(NX*A+1.2,NY*B+1.2),sheetM);s.position.set(center.x,center.y,z*Cc);planeG.add(s)}
+
+// cell outline
+const box=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(NX*A,NY*B,Cc)),new THREE.LineBasicMaterial({color:C('--muted')}));
+box.position.copy(center);scene.add(box);
+
+// crystal faces
+function face(w,h,col,pos,rot){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:C(col),transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false}));m.position.copy(pos);m.rotation.set(...rot);m.visible=false;scene.add(m);return m}
+const fC=face(NX*A,NY*B,'--fc',new THREE.Vector3(center.x,center.y,Cc+.02),[0,0,0]);
+const fA=face(Cc,NY*B,'--fa',new THREE.Vector3(NX*A+.02,center.y,center.z),[0,Math.PI/2,0]);
+const fB=face(NX*A,Cc,'--fb',new THREE.Vector3(center.x,-.02,center.z),[Math.PI/2,0,0]);
+
+// axes with labels
+function label(t,col){const c=document.createElement('canvas');c.width=160;c.height=64;const x=c.getContext('2d');x.font='bold 40px sans-serif';x.fillStyle=col;x.textAlign='center';x.textBaseline='middle';x.fillText(t,80,32);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));sp.scale.set(2.5,1,1);return sp}
+const O=new THREE.Vector3(-2,-2,0);
+[[1,0,0,'a軸',NX*A+3],[0,1,0,'b軸',NY*B+3],[0,0,1,'c軸',Cc+2]].forEach(([x,y,z,t,L])=>{
+  const d=new THREE.Vector3(x,y,z);scene.add(new THREE.ArrowHelper(d,O,L,C('--fg'),.7,.38));
+  const l=label(t,hex('--fg'));l.position.copy(O).addScaledVector(d,L+1);scene.add(l);
 });
 
-// --- gap shapes ---
-// d_{x²-y²}: r = R·|sin²θ·cos2φ|, colored by sign of cos2φ (+ along a, − along b)
-function gapMesh(kind){
-  const R=kind==='d'?3.2:1.9, nt=90, np=180, pos=[], col=[], idx=[];
-  const cp=C('--plus'), cm=C('--minus');
-  for(let i=0;i<=nt;i++){const th=Math.PI*i/nt;
-    for(let j=0;j<=np;j++){const ph=2*Math.PI*j/np;
-      const v=kind==='d'?Math.sin(th)**2*Math.cos(2*ph):1;
-      const r=R*Math.abs(v);
-      pos.push(r*Math.sin(th)*Math.cos(ph),r*Math.sin(th)*Math.sin(ph),r*Math.cos(th)*(kind==='d'?1:.35));
-      const c=v>=0?cp:cm;col.push(c.r,c.g,c.b);}}
-  for(let i=0;i<nt;i++)for(let j=0;j<np;j++){const a=i*(np+1)+j,b=a+np+1;idx.push(a,b,a+1,b,b+1,a+1)}
-  const g=new THREE.BufferGeometry();
-  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
-  g.setIndex(idx);g.computeVertexNormals();
-  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,transparent:true,opacity:.72,side:THREE.DoubleSide,roughness:.5,depthWrite:false}));
-  m.position.z=1.3;return m;
-}
-const gaps={d:gapMesh('d'),s:gapMesh('s')};
-// node lines (45°) for d-wave
-const nodes=new THREE.Group();
-[45,135].forEach(a=>{const t=a*Math.PI/180;const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-4.2*Math.cos(t),-4.2*Math.sin(t),1.3),new THREE.Vector3(4.2*Math.cos(t),4.2*Math.sin(t),1.3)]);
-  const l=new THREE.Line(g,new THREE.LineDashedMaterial({color:C('--muted'),dashSize:.25,gapSize:.18}));l.computeLineDistances();nodes.add(l)});
-const nl=label('ノード','#'+C('--muted').getHexString());nl.position.set(3.3,3.3,1.6);nodes.add(nl);
-gaps.d.add(nodes);nodes.position.z=-1.3;
-scene.add(gaps.d,gaps.s);
+const bind=(id,fn)=>{const e=document.getElementById(id);e.onchange=()=>fn(e.checked);fn(e.checked)};
+bind('tPl',v=>planeG.visible=v); bind('tOther',v=>otherG.visible=v);
+bind('tC',v=>fC.visible=v); bind('tA',v=>fA.visible=v); bind('tB',v=>fB.visible=v);
 
-const desc={
-  d:'d波：a軸方向（赤）とb軸方向（青）でギャップの符号が逆。45°方向（点線）でギャップ0＝ノード。',
-  s:'s波：どの方向でも同じ符号・同じ大きさ。a軸とb軸の区別がない。',
-  n:'CuO₂面：Cu–O–Cuの結合がa軸・b軸に沿って並び、面はc軸方向に積み重なる。'};
-function setMode(m){gaps.d.visible=m==='d';gaps.s.visible=m==='s';
-  ['d','s','n'].forEach(k=>document.getElementById('b'+k).setAttribute('aria-pressed',k===m));
-  document.getElementById('desc').textContent=desc[m];}
-['d','s','n'].forEach(k=>document.getElementById('b'+k).onclick=()=>setMode(k));
-document.getElementById('lat').onchange=e=>lattice.visible=e.target.checked;
-setMode('d');
-
-function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();
-  scene.background=C('--bg');}
+function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();scene.background=C('--bg')}
 addEventListener('resize',resize);resize();
-matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>location.reload());
 (function loop(){controls.update();renderer.render(scene,camera);requestAnimationFrame(loop)})();
 </script>
