@@ -1,0 +1,144 @@
+<title>ミッドギャップ状態の位相</title>
+<style>
+/* Layout: one canvas, two stacked rows (s vs d), minimal transport controls under it */
+:root{
+  --bg:#f5f6f8; --fg:#1b2230; --muted:#7a8394; --line:#c9cfda;
+  --vac:#e9ebef; --nm:#fbf1d6; --sc:#e3ebf7;
+  --e:#d9483b; --h:#2c6fbb; --ok:#2f8f5b; --ng:#c0392b;
+  --ui:"Noto Sans JP",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161d;--fg:#e6e9ef;--muted:#8c95a6;--line:#343c4b;--vac:#1b2029;--nm:#2e2a1d;--sc:#1c2738;--e:#ef6a5c;--h:#5b9be0;--ok:#4cc488;--ng:#ef6a5c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161d;--fg:#e6e9ef;--muted:#8c95a6;--line:#343c4b;--vac:#1b2029;--nm:#2e2a1d;--sc:#1c2738;--e:#ef6a5c;--h:#5b9be0;--ok:#4cc488;--ng:#ef6a5c;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--ui);padding-inline:16px;padding-block:16px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+canvas{width:100%;height:auto;display:block}
+.ctl{display:flex;gap:8px;justify-content:center}
+button{font:inherit;font-size:18px;width:44px;height:36px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+button:focus-visible{outline:2px solid var(--h);outline-offset:2px}
+</style>
+<div class="wrap">
+  <canvas id="c" width="2080" height="1240" aria-label="アンドレーエフ束縛状態の位相アニメーション"></canvas>
+  <div class="ctl">
+    <button id="play" aria-label="再生/一時停止">❚❚</button>
+    <button id="reset" aria-label="最初から">↺</button>
+  </div>
+</div>
+<script>
+const cv=document.getElementById('c'),g=cv.getContext('2d');
+const S=2; g.scale(S,S); // logical 1040x620
+let col={};
+function readCols(){const cs=getComputedStyle(document.documentElement);for(const k of ['bg','fg','muted','line','vac','nm','sc','e','h','ok','ng'])col[k]=cs.getPropertyValue('--'+k).trim()}
+readCols();matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',readCols);
+const PI=Math.PI, DUR=9000;
+// rows: phiA, phiB = phase of Δ felt at Andreev points A (direction k) and B (direction k̄)
+const rows=[
+  {y:10, tag:'s  /  d{100}', phiA:0, phiB:0, lobe:'s'},
+  {y:320,tag:'d{110}',       phiA:0, phiB:PI, lobe:'d'}];
+const ease=t=>t<0?0:t>1?1:t*t*(3-2*t);
+// timeline (fractions of DUR)
+const T={a1:.14,A:[.14,.24],a2:.38,M:[.38,.42],a3:.56,B:[.56,.66],a4:.80,end:.84};
+function cumPhase(r,t){ // accumulated phase at time fraction t
+  let p=0;
+  p+=(-PI/2-r.phiA)*ease((t-T.A[0])/(T.A[1]-T.A[0]));
+  p+=(-PI/2+r.phiB)*ease((t-T.B[0])/(T.B[1]-T.B[0]));
+  return p;}
+function txt(s,x,y,size=15,c=col.fg,align='center',w='600'){g.font=`${w} ${size}px ${getComputedStyle(document.body).fontFamily}`;g.fillStyle=c;g.textAlign=align;g.textBaseline='middle';g.fillText(s,x,y)}
+function arrow(x1,y1,x2,y2,c,w=2,head=8,dash){g.strokeStyle=c;g.fillStyle=c;g.lineWidth=w;g.setLineDash(dash||[]);g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.setLineDash([]);
+  const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-head*Math.cos(a-.4),y2-head*Math.sin(a-.4));g.lineTo(x2-head*Math.cos(a+.4),y2-head*Math.sin(a+.4));g.fill()}
+function lerp(a,b,u){return [a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u]}
+
+function drawRow(r,t){
+  const y0=r.y, mid=y0+150;
+  // row tag
+  txt(r.tag,20,y0+16,17,col.fg,'left','700');
+  // ---- geometry ----
+  const xv=20,xs=90,xi=250,xe=380;
+  g.fillStyle=col.vac;g.fillRect(xv,y0+35,xs-xv,230);
+  g.fillStyle=col.nm;g.fillRect(xs,y0+35,xi-xs,230);
+  g.fillStyle=col.sc;g.fillRect(xi,y0+35,xe-xi,230);
+  g.strokeStyle=col.fg;g.lineWidth=3;g.beginPath();g.moveTo(xs,y0+35);g.lineTo(xs,y0+265);g.stroke();
+  g.lineWidth=1.5;g.setLineDash([6,4]);g.beginPath();g.moveTo(xi,y0+35);g.lineTo(xi,y0+265);g.stroke();g.setLineDash([]);
+  txt('N',(xs+xi)/2,y0+250,15,col.muted);txt('S',(xi+xe)/2,y0+250,15,col.muted);
+  const M=[xs,mid],A=[xi,mid+75],B=[xi,mid-75];
+  // static path
+  g.strokeStyle=col.line;g.lineWidth=2;g.beginPath();g.moveTo(...A);g.lineTo(...M);g.lineTo(...B);g.stroke();
+  // Δ badges in S at A and B
+  [[A,r.phiA,'k'],[B,r.phiB,'k̄']].forEach(([P,ph,lab])=>{
+    const c=ph?col.h:col.e;g.fillStyle=c;g.beginPath();g.arc(P[0]+48,P[1],17,0,2*PI);g.fill();
+    txt('Δ'+(ph?'−':'+'),P[0]+48,P[1]+1,14,col.bg,'center','700');
+    txt(lab,P[0]+80,P[1],15,col.fg)});
+  // moving quasiparticle
+  let pos,isE,dir;
+  if(t<T.a1){pos=lerp(M,A,t/T.a1);isE=1;dir=[A,M]}
+  else if(t<T.A[1]){pos=A;isE=t<(T.A[0]+T.A[1])/2}
+  else if(t<T.a2){pos=lerp(A,M,(t-T.A[1])/(T.a2-T.A[1]));isE=0}
+  else if(t<T.M[1]){pos=M;isE=0}
+  else if(t<T.a3){pos=lerp(M,B,(t-T.M[1])/(T.a3-T.M[1]));isE=0}
+  else if(t<T.B[1]){pos=B;isE=t>(T.B[0]+T.B[1])/2}
+  else if(t<T.a4){pos=lerp(B,M,(t-T.B[1])/(T.a4-T.B[1]));isE=1}
+  else{pos=M;isE=1}
+  // flashes
+  const flash=(P,w0,w1,c)=>{if(t>w0&&t<w1){const u=(t-w0)/(w1-w0);g.strokeStyle=c;g.globalAlpha=1-u;g.lineWidth=3;g.beginPath();g.arc(P[0],P[1],8+30*u,0,2*PI);g.stroke();g.globalAlpha=1}};
+  flash(A,T.A[0],T.A[1],col.fg);flash(B,T.B[0],T.B[1],col.fg);flash(M,T.M[0],T.M[1]+.04,col.muted);
+  // phase tags at Andreev points
+  if(t>T.A[0]) txt(r.phiA?'−π/2 −π':'−π/2',A[0]-52,A[1]-26,14,col.fg);
+  if(t>T.B[0]) txt(r.phiB?'−π/2 +π':'−π/2',B[0]-52,B[1]+26,14,col.fg);
+  if(t>T.M[0]) txt('0',M[0]+20,M[1],14,col.muted,'left');
+  g.fillStyle=isE?col.e:col.h;g.beginPath();g.arc(pos[0],pos[1],11,0,2*PI);g.fill();
+  txt(isE?'e':'h',pos[0],pos[1]+1,13,col.bg,'center','700');
+
+  // ---- k-space lobes ----
+  const kx=480,ky=mid,R=58;
+  g.strokeStyle=col.line;g.setLineDash([4,3]);g.lineWidth=1;g.beginPath();g.arc(kx,ky,R,0,2*PI);g.stroke();g.setLineDash([]);
+  for(const sg of [1,-1]){g.beginPath();
+    for(let i=0;i<=360;i++){const ph=i*PI/180;let v=r.lobe==='s'?1:-Math.sin(2*ph); // d rotated 45°: + toward lower right
+      const rr=v*sg>0?.8*R*(r.lobe==='s'?1:Math.abs(v)):0;const X=kx+rr*Math.cos(ph),Y=ky+rr*Math.sin(ph);i?g.lineTo(X,Y):g.moveTo(X,Y)}
+    g.closePath();g.fillStyle=sg>0?col.e:col.h;g.globalAlpha=.35;g.fill();g.globalAlpha=1}
+  const ang=Math.atan2(75,160);
+  const hl=t>=T.A[0]&&t<T.a2?'k':t>=T.B[0]&&t<T.a4?'kb':'';
+  arrow(kx,ky,kx+R*Math.cos(ang),ky+R*Math.sin(ang),hl==='k'?col.fg:col.muted,hl==='k'?3:2);
+  arrow(kx,ky,kx+R*Math.cos(-ang),ky+R*Math.sin(-ang),hl==='kb'?col.fg:col.muted,hl==='kb'?3:2);
+  txt('k',kx+R*Math.cos(ang)+14,ky+R*Math.sin(ang)+8,15);txt('k̄',kx+R*Math.cos(-ang)+14,ky+R*Math.sin(-ang)-8,15);
+  if(r.lobe==='d'){txt('a',kx-R-14,ky+R-4,13,col.muted);arrow(kx-R-4,ky+R+10,kx-R+22,ky+R-16,col.muted,1.5,6);
+    txt('b',kx-R-26,ky+R-26,13,col.muted);arrow(kx-R-4,ky+R+10,kx-R-30,ky+R-16,col.muted,1.5,6)}
+
+  // ---- phase dial ----
+  const dx=660,dy=mid,DR=70,p=cumPhase(r,t);
+  g.strokeStyle=col.line;g.lineWidth=2;g.beginPath();g.arc(dx,dy,DR,0,2*PI);g.stroke();
+  txt('0',dx,dy-DR-14,13,col.muted);txt('−π/2',dx-DR-26,dy,13,col.muted);txt('±π',dx,dy+DR+14,13,col.muted);txt('+π/2',dx+DR+26,dy,13,col.muted);
+  // trail
+  g.strokeStyle=col.h;g.lineWidth=5;g.globalAlpha=.35;g.beginPath();
+  const base=-PI/2; // screen angle of phase 0 (top); positive phase clockwise
+  const steps=60;for(let i=0;i<=steps;i++){const tt=t*i/steps,pp=cumPhase(r,tt),a=base+pp,X=dx+(DR-10)*Math.cos(a),Y=dy+(DR-10)*Math.sin(a);i?g.lineTo(X,Y):g.moveTo(X,Y)}
+  g.stroke();g.globalAlpha=1;
+  arrow(dx,dy,dx+(DR-6)*Math.cos(base),dy+(DR-6)*Math.sin(base),col.line,2,7,[4,4]);
+  arrow(dx,dy,dx+(DR-6)*Math.cos(base+p),dy+(DR-6)*Math.sin(base+p),col.fg,3.5,11);
+  g.fillStyle=col.fg;g.beginPath();g.arc(dx,dy,4,0,2*PI);g.fill();
+  const done=t>=T.end, total=cumPhase(r,1), ok=Math.abs(Math.cos(total)-1)<1e-6;
+  if(done){txt('Σ = '+(ok?'0':'−π'),dx,dy+DR+44,17,ok?col.ok:col.ng,'center','700')}
+
+  // ---- wave after one loop vs start ----
+  const wx0=790,wx1=1020,wy=mid,amp=34;
+  g.strokeStyle=col.line;g.lineWidth=1;g.beginPath();g.moveTo(wx0,wy);g.lineTo(wx1,wy);g.stroke();
+  const wave=(ph,c,lw,a=1)=>{g.strokeStyle=c;g.lineWidth=lw;g.beginPath();for(let x=wx0;x<=wx1;x+=2){const Y=wy-a*amp*Math.cos((x-wx0)/18-ph);x===wx0?g.moveTo(x,Y):g.lineTo(x,Y)}g.stroke()};
+  wave(0,col.muted,2);txt('ψ₀',wx0-16,wy-amp,13,col.muted);
+  wave(-p,col.fg,2.2);txt('ψ₁',wx0-16,wy+amp,13,col.fg);
+  if(done){const s=Math.cos(total/2);wave(-total/2,ok?col.ok:col.ng,4,2*Math.abs(s)>0.01?Math.abs(s):0);
+    txt(ok?'ψ₀+ψ₁ ✓':'ψ₀+ψ₁ = 0 ✗',(wx0+wx1)/2,wy+amp*2+16,16,ok?col.ok:col.ng,'center','700');}
+}
+let t0=performance.now(),paused=false,tp=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(now){
+  let t=paused?tp:((now-t0)%(DUR*1.25))/DUR; if(t>1)t=1;
+  if(!paused)tp=t;
+  g.clearRect(0,0,1040,620);g.fillStyle=col.bg;g.fillRect(0,0,1040,620);
+  g.strokeStyle=col.line;g.lineWidth=1;g.beginPath();g.moveTo(20,312);g.lineTo(1020,312);g.stroke();
+  rows.forEach(r=>drawRow(r,t));
+  requestAnimationFrame(frame);
+}
+const pb=document.getElementById('play');
+pb.onclick=()=>{paused=!paused;pb.textContent=paused?'▶':'❚❚';if(!paused)t0=performance.now()-tp*DUR};
+document.getElementById('reset').onclick=()=>{tp=0;t0=performance.now()};
+if(reduce){paused=true;tp=1;pb.textContent='▶'}
+requestAnimationFrame(frame);
+</script>
