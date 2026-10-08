@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hu 1994 読解ガイド</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--bg:#fbfaf7;--panel:#ffffff;--ink:#1f2328;--muted:#5f6670;--line:#e3e0d8;--accent:#b4472f;--tag:#f3e7d9;--note:#eef4fb;--noteline:#2f6db5;--quote:#f6f3ec}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#16181c;--panel:#1d2026;--ink:#e6e6e6;--muted:#a0a6ad;--line:#30343b;--accent:#e0805f;--tag:#3a2f26;--note:#1c2a3a;--noteline:#6aa2e8;--quote:#24272d}}
+:root[data-theme="dark"]{--bg:#16181c;--panel:#1d2026;--ink:#e6e6e6;--muted:#a0a6ad;--line:#30343b;--accent:#e0805f;--tag:#3a2f26;--note:#1c2a3a;--noteline:#6aa2e8;--quote:#24272d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",sans-serif;line-height:1.75}
+header{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+header h1{font-size:1.05rem;margin:0}
+header p{margin:0;color:var(--muted);font-size:.85rem}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:calc(100vh - 64px)}
+#pdfpane{overflow:auto;border-right:1px solid var(--line);background:var(--panel);padding:12px}
+#notes{overflow:auto;padding:12px 16px 80px}
+#drop{border:2px dashed var(--line);border-radius:10px;padding:24px;text-align:center;color:var(--muted)}
+#drop input{margin-top:10px}
+.page{margin:0 auto 14px;display:block;max-width:100%;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.pagelabel{font-size:.8rem;color:var(--muted);text-align:center;margin-bottom:4px}
+section.item{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+section.item.active{border-color:var(--accent)}
+.loc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+.tag{background:var(--tag);border-radius:6px;padding:1px 8px;font-size:.8rem}
+.jump{font-size:.8rem;border:1px solid var(--line);background:transparent;color:var(--accent);border-radius:6px;padding:1px 8px;cursor:pointer}
+h2{font-size:1rem;margin:4px 0 6px}
+h3.part{font-size:.95rem;color:var(--accent);margin:22px 0 8px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.note{background:var(--note);border-left:3px solid var(--noteline);padding:8px 10px;margin:8px 0;border-radius:4px;font-size:.93rem}
+.note b:first-child{display:block;margin-bottom:2px}
+q,.q{background:var(--quote);padding:0 4px;border-radius:3px;font-family:Georgia,serif;font-size:.92em}
+ul{padding-left:1.2em;margin:4px 0}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.themebtn{font-size:.8rem;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:6px;padding:2px 8px;cursor:pointer}
+@media (max-width:820px){.wrap{display:block;height:auto}#pdfpane{max-height:60vh;border-right:none;border-bottom:1px solid var(--line)}#notes{padding:12px 16px 60px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>C.-R. Hu, PRL 72, 1526 (1994) 段落対応の読解ガイド</h1>
+    <p>本文の翻訳ではありません。原文と並べて読むための、段落ごとの要約・解説・導出の補足です。</p>
+  </div>
+  <button class="themebtn" id="themebtn">表示切替</button>
+</header>
+<div class="wrap">
+  <div id="pdfpane">
+    <div id="drop">
+      手元の論文 PDF を選ぶと、ここに表示されます（ファイルはこのブラウザの中だけで開き、どこにも送信しません）。<br>
+      <input type="file" id="file" accept="application/pdf">
+    </div>
+    <div id="pages"></div>
+  </div>
+
+  <div id="notes">
+
+<h3 class="part">導入：何が問題か</h3>
+
+<section class="item" data-page="1">
+  <div class="loc"><span class="tag">p.1526 上</span><span class="tag">アブストラクト</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>主張の要約</h2>
+  <p>d 波超伝導体の {110} 表面には、<b>エネルギーがギャップの真ん中（フェルミ準位、E = 0）にある表面状態</b>が、面積あたりかなりの密度で存在する。表面は真空・絶縁体でもよいし、薄い清浄な金属層で覆われていてもよい。この状態は多くの観測可能な帰結をもち、d 波と異方的 s 波を見分ける目印になる。</p>
+  <div class="note"><b>用語</b>
+  <ul>
+    <li><b>midgap state（ミッドギャップ状態）</b>：ギャップの中央 E = 0 にある状態。</li>
+    <li><b>areal density</b>：表面の単位面積あたりの状態数。</li>
+    <li><b>size-quantized</b>：薄くて、厚さ方向の運動が量子化されている金属層。</li>
+  </ul></div>
+</section>
+
+<section class="item" data-page="1">
+  <div class="loc"><span class="tag">p.1526 左段 第1段落</span><span class="tag">〜右段の上</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>背景：既存の実験は「符号」を見ていない</h2>
+  <ul>
+    <li>銅酸化物高温超伝導体の秩序変数が d 波か s 波かが問題になっている。理論の多くは \(d_{x_a^2-x_b^2}\) 波を示唆する（a, b は CuO₂ 面の結晶軸）。</li>
+    <li>d 波ではギャップがフェルミ面上の「節（ノード）」でゼロになる。そのため低温での熱力学量や輸送係数は温度のべき乗で変化する。s 波なら指数関数的になる。実験の多くはべき乗的。</li>
+    <li>しかしこれは決定的ではない。理由は2つ。
+      <ol>
+        <li>べき乗則は「ギャップがゼロになる方向がある」ことだけによる。秩序変数 \(\Delta(\mathbf{k})\propto k_a^2-k_b^2\) の<b>符号</b>は関係しない。だから異方的 s 波でも説明できてしまう（Anderson らの立場）。</li>
+        <li>d 波は不純物散乱に敏感なので、解釈が難しい。</li>
+      </ol></li>
+    <li>ARPES（Shen ら）はフェルミ面の方向ごとにギャップを測り、\(|k_a^2-k_b^2|\) の対称性を見た。ただし、これも絶対値しか測れない。SNS 接合での多重 Andreev 散乱の提案も同じ限界をもつ。</li>
+    <li>符号を直接見る実験は Wollman ら（[7]、SQUID）だけで、結果は d 波を支持している。</li>
+  </ul>
+  <div class="note"><b>この段落の役割</b>「大きさは測れるが、符号は測れない」という空白を示し、本論文の動機にしている。</div>
+</section>
+
+<section class="item" data-page="1">
+  <div class="loc"><span class="tag">p.1526 右段 第2段落</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>本論文の提案</h2>
+  <p>d 波秩序変数の<b>符号</b>の直接の帰結として、適切な配置では面積あたりかなりの数の midgap 表面状態ができることを示す。同じ条件でも、s 波（等方的でも異方的でも）ではこの状態はできない。観測可能な帰結は定性的に議論する。</p>
+</section>
+
+<h3 class="part">模型の設定</h3>
+
+<section class="item" data-page="1">
+  <div class="loc"><span class="tag">p.1526 右段 第3段落</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>系と座標</h2>
+  <ul>
+    <li>超伝導体 S は {110} 表面をもつ。表面はむき出しでもよいし、清浄で薄い金属層 N（厚さ \(d\)、平均自由行程 \(\ell\) より十分薄い）で覆われていてもよい。</li>
+    <li>座標：S が \(x>0\) を占める。\(x\) 軸は結晶の [110] 方向、\(z\) 軸は [001] 方向（表面に平行）。</li>
+    <li>この座標では \(k_a^2-k_b^2=\mp 2k_xk_y\) となり、\(d_{x_a^2-x_b^2}\) 波は表面の座標で見ると \(d_{xy}\) 波になる。</li>
+  </ul>
+  <div class="note"><b>補足：なぜ \(\mp 2k_xk_y\) か</b>
+  結晶軸 a, b を表面座標 x, y に対して 45° 回すと、\(k_a=(k_x\mp k_y)/\sqrt2,\ k_b=(k_x\pm k_y)/\sqrt2\) となる。これを代入すると \(k_a^2-k_b^2=\mp2k_xk_y\)。符号 ∓ は回す向きによる。<br>
+  大事なのは、\(k_x\to -k_x\)（表面での鏡面反射）でこの量の符号が反転することです。</div>
+</section>
+
+<section class="item" data-page="1">
+  <div class="loc"><span class="tag">p.1526 右段 最終段落</span><span class="tag">〜p.1527 左段 第1段落</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>物理的な描像：2種類の反射が交互に起きる</h2>
+  <ul>
+    <li>N 層があるとする。\(d\to0\) にすれば、N 層のない場合の結果になる。</li>
+    <li>表面状態は「粒子が2種類の反射を交互に繰り返してできる束縛状態」とみなせる。
+      <ul>
+        <li><b>表面（x = −d）での鏡面反射</b>：\(k_x\) の符号だけが変わり、粒子の種類（電子か正孔か）は変わらない。</li>
+        <li><b>N–S 界面での Andreev 反射</b>：非対角のペアポテンシャル Δ が原因で起き、運動量 \(\mathbf{k}\) の電子を運動量 \(-\mathbf{k}\) の正孔に変える。逆も同じ。</li>
+      </ul></li>
+    <li>2つの反射が交互に起きるので、続けて起きる Andreev 反射で粒子が感じる Δ は、
+      <ul><li>\(d_{xy}\) 波：符号が交互に変わる</li><li>s 波、または \(d_{x^2-y^2}\) 波（{100} 表面）：同じ符号</li></ul></li>
+  </ul>
+  <div class="note"><b>補足：Codex の図との対応</b>
+  「N 層の中で、2種類の反射を繰り返す」という図は、まさにこの段落の内容です。原文は Andreev 反射を「電子 k → 正孔 −k」と書いています。図の横矢印は速度の向きなので、表記は違いますが矛盾はしません。</div>
+</section>
+
+<section class="item" data-page="2">
+  <div class="loc"><span class="tag">p.1527 左段 第1段落（続き）</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>鏡像法：Δ が「奇関数」になる</h2>
+  <p>表面の効果を鏡像法で扱う。\(x'\equiv x+d<0\) の領域に Δ を延長するときの規則は次のとおり。</p>
+  \[\Delta\big((k_x,k_y,k_z),(-x',y,z)\big)=\Delta\big((-k_x,k_y,k_z),(x',y,z)\big)\]
+  <p>\(d_{xy}\) 超伝導体では右辺が \(-\Delta\big((k_x,k_y,k_z),(x',y,z)\big)\) になる。つまり、ペアポテンシャルが \(x'\) について<b>奇関数</b>になる。これはポリアセチレンの二量化ソリトンと同じ状況である。</p>
+  <ul>
+    <li>midgap 状態を生むのはこの<b>対称性</b>であり、Δ の細かい関数形ではない。</li>
+    <li>そのため近接効果（表面付近で Δ が変形すること）を入れても、状態があること、面密度、分散がないこと（WKBJ 近似の範囲で）は変わらない。</li>
+    <li>面密度は \(d\) によらないので、N 層がない場合（d = 0）でも同じになる。</li>
+  </ul>
+  <div class="note"><b>用語</b>
+  <ul>
+    <li><b>鏡像法</b>：壁がある問題を、壁の向こう側に「鏡に映した系」を置いて、壁のない問題に置き換える方法。</li>
+    <li><b>近接効果</b>：界面の近くで、超伝導の秩序変数がしみ出したり減ったりすること。</li>
+    <li><b>WKBJ 近似</b>：波長 \(1/k_F\) が、Δ の変化する長さ（コヒーレンス長）より十分短いとして、速い振動とゆっくりした包絡線を分ける近似。</li>
+  </ul></div>
+</section>
+
+<section class="item" data-page="2">
+  <div class="loc"><span class="tag">p.1527 左段 第2段落</span><span class="tag">式 (1)</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>最も簡単な模型の仮定</h2>
+  <ul>
+    <li>表面と N–S 界面は無限に広く、完全に平ら。\(\ell=\infty\)（不純物なし）。</li>
+    <li>N–S 界面での物質定数の不連続（フェルミ速度など）は、Δ 以外すべて無視する（透明な界面）。</li>
+    <li>近接効果は無視し、Δ の重心座標 \(\mathbf r\) への依存は階段関数 \(\Theta(x)\) とする。</li>
+    <li>非 s 波の Δ は相対座標にも依存する。フーリエ変換すると相対波数 \(\mathbf k\) に依存し、弱結合ではそれがフェルミ面上に固定されるので、変数は方向 \(\hat{\mathbf k}\) だけになる。</li>
+  </ul>
+  \[\Delta(\hat{\mathbf k},\mathbf r)=\Delta_0(\hat{\mathbf k})\,\Theta(x)\tag{1}\]
+  <div class="note"><b>記号</b>\(\Delta_0(\hat{\mathbf k})\)：方向 \(\hat{\mathbf k}\) でのバルクのギャップ（符号つき）。\(\Theta(x)\)：\(x>0\) で 1、\(x<0\) で 0。</div>
+</section>
+
+<h3 class="part">方程式と解</h3>
+
+<section class="item" data-page="2">
+  <div class="loc"><span class="tag">p.1527 左段 下〜右段 上</span><span class="tag">式 (2a)(2b)</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>Bogoliubov–de Gennes（BdG）方程式</h2>
+  \[\epsilon_n u_n(\mathbf x_1)=\hat h_0u_n(\mathbf x_1)+\int\Delta(\mathbf s,\mathbf r)\,v_n(\mathbf x_2)\,d\mathbf x_2\tag{2a}\]
+  \[\epsilon_n v_n(\mathbf x_1)=-\hat h_0v_n(\mathbf x_1)+\int\Delta(\mathbf s,\mathbf r)\,u_n(\mathbf x_2)\,d\mathbf x_2\tag{2b}\]
+  <ul>
+    <li>\(u_n\)：励起 n の「電子成分」の波動関数、\(v_n\)：「正孔成分」の波動関数、\(\epsilon_n\)：フェルミ準位から測った励起エネルギー。</li>
+    <li>\(\hat h_0=-\nabla^2/2m-\mu\)：外場のない自由電子のハミルトニアン（\(\mu\) は化学ポテンシャル、\(\hbar=1\)）。</li>
+    <li>\(\mathbf s=\mathbf x_1-\mathbf x_2\)（相対座標）、\(\mathbf r=(\mathbf x_1+\mathbf x_2)/2\)（重心座標）。</li>
+  </ul>
+  <div class="note"><b>意味</b>Δ の項が電子と正孔を混ぜる（非対角項）。Δ が非局所的（\(\mathbf s\) に依存）なのは、非 s 波だからです。</div>
+</section>
+
+<section class="item" data-page="2">
+  <div class="loc"><span class="tag">p.1527 右段</span><span class="tag">式 (3)(4a)(4b)</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>WKBJ 近似：Andreev 方程式</h2>
+  \[\begin{pmatrix}u_n\\v_n\end{pmatrix}=e^{i\mathbf k_F\cdot\mathbf r}\begin{pmatrix}\tilde u_n\\ \tilde v_n\end{pmatrix}\tag{3}\]
+  \[\epsilon_n\tilde u_n=-\tfrac{i}{m}\,\mathbf k_F\cdot\nabla\tilde u_n+\Delta(\hat{\mathbf k}_F,\mathbf r)\,\tilde v_n\tag{4a}\]
+  \[\epsilon_n\tilde v_n=\tfrac{i}{m}\,\mathbf k_F\cdot\nabla\tilde v_n+\Delta(\hat{\mathbf k}_F,\mathbf r)\,\tilde u_n\tag{4b}\]
+  <ul>
+    <li>\(\mathbf k_F=(k_{x0},k_y,k_z)\)：フェルミ面上の波数。速い振動 \(e^{i\mathbf k_F\cdot\mathbf r}\) をくくり出し、ゆっくり変わる包絡線 \(\tilde u,\tilde v\) の方程式にしたもの。</li>
+    <li>\(\mathbf k_F/m=\mathbf v_F\) なので、\(\mathbf v_F\cdot\nabla\) は「軌道に沿った微分」。<b>各軌道ごとに1次元の問題</b>になる。</li>
+    <li>この軌道の上で感じる Δ は \(\Delta(\hat{\mathbf k}_F)\)。</li>
+  </ul>
+</section>
+
+<section class="item" data-page="2">
+  <div class="loc"><span class="tag">p.1527 右段</span><span class="tag">式 (5)–(8)</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>N 層に束縛された解（|ε| &lt; |Δ₀|）</h2>
+  \[(\tilde u_n^{>},\tilde v_n^{>})=e^{-\gamma x}(\hat u_n,\hat v_n)\quad(x>0)\tag{5a}\]
+  \[(\tilde u_n^{<},\tilde v_n^{<})=(e^{ik_1x}\hat u_n,\ e^{-ik_1x}\hat v_n)\quad(x<0)\tag{5b}\]
+  \[\hat u_n=\Delta_0/D,\qquad \hat v_n=\Big[-i\,\mathrm{sgn}(k_{x0})\sqrt{\Delta_0^2-\epsilon_n^2}+\epsilon_n\Big]/D\tag{6}\]
+  \[D\equiv\Big[\big|i\,\mathrm{sgn}(k_{x0})\sqrt{\Delta_0^2-\epsilon_n^2}-\epsilon_n\big|^2+\Delta_0^2\Big]^{1/2}\tag{7}\]
+  \[\epsilon_n=\sqrt{-(k_{x0}\gamma/m)^2+\Delta_0^2}=k_{x0}k_1/m\tag{8}\]
+  <ul>
+    <li>S 側（x &gt; 0）：ギャップの中のエネルギーなので伝播できず、\(e^{-\gamma x}\) で減衰する。</li>
+    <li>N 側（x &lt; 0）：Δ = 0 なので、電子と正孔が平面波として伝わる。電子と正孔で波数のずれ \(\pm k_1\) が逆向き。</li>
+    <li>\(\hat u,\hat v\) は \(k_{x0}\) の符号に直接よるうえ、\(\Delta_0\) を通じても間接的によるので、添字 ± で区別する。</li>
+  </ul>
+  <div class="note"><b>補足：式 (8) の読み方</b>
+  \(k_{x0}/m=v_x\)（速度の x 成分）なので、\(\gamma=\sqrt{\Delta_0^2-\epsilon^2}/v_x\)、\(k_1=\epsilon/v_x\) です。<br>
+  E = 0 では \(k_1=0\)、\(\gamma=|\Delta_0|/v_x\)。減衰長は、コヒーレンス長 \(v_F/|\Delta_0|\) と同じ程度になります。</div>
+</section>
+
+<section class="item" data-page="2">
+  <div class="loc"><span class="tag">p.1527 右段 最終段落</span><span class="tag">式 (9a)(9b)</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>壁（x = −d）を入れるため、±k<sub>x0</sub> を重ね合わせる</h2>
+  \[\begin{pmatrix}u_n^{>}\\v_n^{>}\end{pmatrix}=e^{i\mathbf k_\perp\cdot\mathbf r_\perp}e^{-\gamma x}\Big[Ae^{ik_{x0}x}\begin{pmatrix}\hat u_{n+}\\ \hat v_{n+}\end{pmatrix}+Be^{-ik_{x0}x}\begin{pmatrix}\hat u_{n-}\\ \hat v_{n-}\end{pmatrix}\Big]\quad(x>0)\tag{9a}\]
+  \[\begin{pmatrix}u_n^{<}\\v_n^{<}\end{pmatrix}=e^{i\mathbf k_\perp\cdot\mathbf r_\perp}\Big[Ae^{ik_{x0}x}\begin{pmatrix}e^{ik_1x}\hat u_{n+}\\ e^{-ik_1x}\hat v_{n+}\end{pmatrix}+Be^{-ik_{x0}x}\begin{pmatrix}e^{-ik_1x}\hat u_{n-}\\ e^{ik_1x}\hat v_{n-}\end{pmatrix}\Big]\quad(x<0)\tag{9b}\]
+  <p>\(\mathbf k_\perp=(0,k_y,k_z)\)：表面に平行な波数。壁で保存する。</p>
+  <div class="note"><b>意味</b>鏡面反射は \(k_{x0}\to-k_{x0}\) なので、壁の条件を満たすには「入射する軌道」と「反射した軌道」の両方が必要です。B 項は鏡に映った軌道で、そこで感じる Δ は \(\Delta_0(-k_{x0},k_y,k_z)\) です。</div>
+</section>
+
+<h3 class="part">結果：固有値の条件</h3>
+
+<section class="item" data-page="3">
+  <div class="loc"><span class="tag">p.1528 左段 上</span><span class="tag">式 (10)–(12)</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>束縛状態の条件と、s 波・d 波の分かれ目</h2>
+  <p>式 (9b) が x = −d でゼロになることを要請すると、次の条件が出る。</p>
+  \[e^{4ik_1d}=\Big(\frac{\hat u_{n+}}{\hat v_{n+}}\Big)\Big(\frac{\hat v_{n-}}{\hat u_{n-}}\Big)\tag{10}\]
+  <p>s 波、または \(d_{x^2-y^2}\) 波（{100} 表面）では \(\Delta_0(-k_{x0},k_y,k_z)=\Delta_0(k_{x0},k_y,k_z)\) なので、</p>
+  \[e^{4ik_1d}=\frac{\epsilon_n+i\sqrt{\Delta_0^2-\epsilon_n^2}}{\epsilon_n-i\sqrt{\Delta_0^2-\epsilon_n^2}}\tag{11}\]
+  <p>\(d_{xy}\) 波では \(\Delta_0(-k_{x0},k_y,k_z)=-\Delta_0(k_{x0},k_y,k_z)\) なので、</p>
+  \[e^{4ik_1d}=-\,\frac{\epsilon_n+i\sqrt{\Delta_0^2-\epsilon_n^2}}{\epsilon_n-i\sqrt{\Delta_0^2-\epsilon_n^2}}\tag{12}\]
+  <div class="note"><b>補足①：式 (10) の導き方</b>
+  式 (9b) の電子成分と正孔成分が、x = −d で両方ゼロになる条件はそれぞれ
+  \[Ae^{-ik_{x0}d}e^{-ik_1d}\hat u_{+}+Be^{ik_{x0}d}e^{ik_1d}\hat u_{-}=0,\qquad Ae^{-ik_{x0}d}e^{ik_1d}\hat v_{+}+Be^{ik_{x0}d}e^{-ik_1d}\hat v_{-}=0\]
+  2式から B/A を消去すると \(e^{4ik_1d}=(\hat u_+/\hat v_+)(\hat v_-/\hat u_-)\) になる。</div>
+  <div class="note"><b>補足②：式 (11)(12) の導き方</b>
+  式 (6) から \(\hat u_+/\hat v_+=\Delta_{0+}/(\epsilon-i\sqrt{\ })\)、\(\hat v_-/\hat u_-=(\epsilon+i\sqrt{\ })/\Delta_{0-}\)。積は
+  \[\frac{\Delta_{0+}}{\Delta_{0-}}\cdot\frac{\epsilon+i\sqrt{\Delta_0^2-\epsilon^2}}{\epsilon-i\sqrt{\Delta_0^2-\epsilon^2}}\]
+  入射と反射の Δ の比 \(\Delta_{0+}/\Delta_{0-}\) が +1 なら (11)、−1 なら (12) になる。<b>符号の違いがここに1つの因子として入る</b>のが、この論文の核心です。</div>
+  <div class="note"><b>補足③：なぜ (12) だけが ε = 0 の解をもつか</b>
+  ε = 0 では \(k_1=0\) なので左辺は 1。右辺の分数は \(i|\Delta_0|/(-i|\Delta_0|)=-1\)。<br>
+  (11)：1 = −1 となり解なし。 (12)：1 = +1 となり、<b>どんな d に対しても成り立つ</b>。</div>
+  <div class="note"><b>物理的な読み方</b>\(4k_1d=2\epsilon\cdot(2d/v_x)\) は、軌道を1周する間に電子と正孔がためる位相の差です。右辺は2回の Andreev 反射でつく位相です。「1周で位相がそろう」という量子化条件になっています。</div>
+</section>
+
+<section class="item" data-page="3">
+  <div class="loc"><span class="tag">p.1528 左段 中ほど</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>midgap 状態の数と、d によらないこと</h2>
+  <ul>
+    <li>式 (11) は E = 0 の解をもたない。式 (12) は、許される \(\mathbf k_\perp\) とスピンごとに1つずつもつ。</li>
+    <li>面密度：球形フェルミ面なら \(k_F^2/2\pi\)、円筒形なら \(2k_F/\pi c\)（c は CuO₂ 面の間隔）。表面にほぼ平行・垂直な \(\mathbf k_F\) は除くので、これは上限の見積もり。</li>
+    <li>ε ≠ 0 の束縛状態の数は d に依存し、d が小さいとゼロになりうる。midgap 状態の数は d によらず、d = 0（むき出しの表面）でも同じ。d = 0 では、ギャップ内の束縛状態は midgap 状態だけになる。</li>
+  </ul>
+  <div class="note"><b>補足：面密度の数え方</b>
+  \(\mathbf k_\perp\) 1つあたり、スピン1つあたり1状態。<br>
+  球形：\(|\mathbf k_\perp|&lt;k_F\) の円の中の状態数 \(\pi k_F^2/(2\pi)^2\) にスピン 2 をかけて \(k_F^2/2\pi\)。<br>
+  円筒形：\(k_y\in[-k_F,k_F]\) で \(2k_F/2\pi\)、\(k_z\) 方向は面1枚あたり \(1/c\)、スピン 2 をかけて \(2k_F/\pi c\)。</div>
+</section>
+
+<section class="item" data-page="3">
+  <div class="loc"><span class="tag">p.1528 左段 後半</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>近接効果と WKBJ を超えた補正</h2>
+  <ul>
+    <li>近接効果を入れると、\(\Theta(x)\) はなめらかな立ち上がりに変わる。ε ≠ 0 の厳密解は一般に得られなくなるが、ゼロエネルギー状態は各 \(\mathbf k_\perp\)・スピンごとに残る。条件は、Δ の符号が \(k_{x0}\) の符号とともに反転することだけ。</li>
+    <li>WKBJ を超えた摂動計算では、エネルギーの補正は最大でも \(\Delta_0^2/\mu\) 程度（正確には \(m\Delta_0^2/k_{x0}^2\)）。そのため、\(k_{x0}\) がゼロに近いところを除いて、ごく弱い分散しかもたない。1次の摂動はゼロになるようにみえる。</li>
+    <li>この補正は、不純物による準位の広がりと一緒に扱えばよい。たとえ厳密にゼロでなくても、これらの状態には粒子・正孔反転で対応する相手がいない。</li>
+  </ul>
+</section>
+
+<h3 class="part">観測可能な帰結</h3>
+
+<section class="item" data-page="3">
+  <div class="loc"><span class="tag">p.1528 右段 第1段落</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>ポリアセチレンのソリトン・渦糸の芯との類似</h2>
+  <ul>
+    <li>midgap 状態の最もよく知られた例は、ポリアセチレンなど共役高分子の二量化ソリトンの中心にある状態。どちらも「奇関数の非対角ポテンシャル」が原因。</li>
+    <li>違い：次元が違う。ソリトンの波動関数は中心に対して偶関数だが、ここでの状態は x′ について奇関数（x′ &lt; 0 に延長したとき）。</li>
+    <li>より近い類似は、s 波超伝導体の渦糸の芯にある低エネルギー励起（Caroli–de Gennes–Matricon 状態）。</li>
+  </ul>
+</section>
+
+<section class="item" data-page="3">
+  <div class="loc"><span class="tag">p.1528 右段 第1段落の後半</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>巨大磁気モーメントの予言</h2>
+  <ul>
+    <li>本当にゼロエネルギーなら、電荷中性の系では T = 0 で半分だけ埋まる。2N₀ 個の状態（上向き・下向きのスピン半分ずつ）を N₀ 個の電子が埋める。</li>
+    <li>分散がないので、どう埋めるかが縮退する。クーロン相互作用がこの縮退を解き、最低エネルギーでは軌道部分が完全反対称、スピン部分が完全対称になる。つまり全スピンがそろい、<b>巨大モーメント</b>ができる（原子物理の Hund 則と同じ考え方）。</li>
+    <li>WKBJ を超えたエネルギーのずれや、不純物による広がりは、この議論を崩しうる。それらが十分小さければ、適度な外部磁場（低温で準位をフェルミ準位の上下に分ける）でモーメントを回復できる。</li>
+    <li>交流での検出：低い周波数 ω の電位 V(t) で表面の電荷を出し入れすると、電荷中性から外れるたびにモーメントが減る。そのためモーメントは 2ω で振動し、V² の 2ω 成分と 180° 位相がずれる。この方法なら Meissner 効果による背景を避けられる。</li>
+  </ul>
+</section>
+
+<section class="item" data-page="3">
+  <div class="loc"><span class="tag">p.1528 右段 最終段落</span><span class="tag">〜p.1529 左段 上</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>平行な2つの {110} 表面をもつ薄い試料</h2>
+  <ul>
+    <li>2つの表面の間隔がコヒーレンス長の数倍しかないと、両面の midgap 準位が結合して結合準位と反結合準位に分かれる。両面のモーメントは反平行になって打ち消し合う。</li>
+    <li>この結合は間隔について指数関数的に小さいので、適度な磁場で打ち消せる。必要な磁場が厚さについて指数関数的に変わることも、midgap 状態の証拠になる（両面の寄与を含む磁化測定の場合）。</li>
+  </ul>
+</section>
+
+<section class="item" data-page="4">
+  <div class="loc"><span class="tag">p.1529 左段 第2段落</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>状態密度の測定で見えるもの</h2>
+  <ul>
+    <li>方向 \(\hat{\mathbf k}\) を1つに絞って測れば、ギャップの中央に鋭いピークとして見える（ノード方向の近くは除く）。十分薄い {110} 膜や、表面に平行な磁場をかけると、ピークは2つに分裂しうる。</li>
+    <li>全方向を平均して測っても、ピークが十分大きく鋭ければ見える。d 波のバルクの状態密度は E = 0 でゼロになるから。</li>
+    <li>ただし、midgap 状態の重みは {110} 表面の面積に比例し、バルクの状態は体積に比例する。比は試料に依存し、無視できるほど小さいこともある。</li>
+  </ul>
+</section>
+
+<section class="item" data-page="4">
+  <div class="loc"><span class="tag">p.1529 左段 第3段落</span><span class="tag">〜右段</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>トンネル分光とゼロバイアス伝導度ピーク（ZBCP）</h2>
+  <ul>
+    <li>準粒子トンネルが最も直接的な観測法だろう。実際、高温超伝導体のトンネル測定では、対向電極（Pb, Nb, Pt, Au など）によらず <b>ZBCP</b> がしばしば観測されてきたが、理由は分かっていなかった [13]。</li>
+    <li>著者はこれを midgap 状態と結びつけたいと考えている。ただし、意図的に {110} 表面を作った試料はほとんどない（[14] は例外かもしれない）。</li>
+    <li>midgap 状態は {110} 表面以外でもできうる：[110] に垂直な内部の亀裂、a-b 面内の穴の境界など。c 軸に平行な磁場が、自由表面の代わりに \(k_{x0}\)（または \(k_y\)）を反転させる可能性もある。これが「ZBCP はよく見えるが、すべての試料ではない」ことの説明になりうる。</li>
+    <li>確実に確かめるには、平らな {110} 表面をもつエピタキシャル単結晶膜を使い、比較として {100} 表面の膜（midgap 状態が出ないはず）も測るのがよい。</li>
+  </ul>
+  <div class="note"><b>用語</b>
+  <ul>
+    <li><b>ゼロバイアス伝導度ピーク（ZBCP）</b>：トンネル接合の微分伝導度 dI/dV が、電圧ゼロでピークをもつこと。</li>
+    <li><b>エピタキシャル膜</b>：基板の結晶方位をそろえて成長させた単結晶の薄膜。</li>
+  </ul></div>
+</section>
+
+<section class="item" data-page="4">
+  <div class="loc"><span class="tag">p.1529 右段</span><span class="tag">脚注 [15]</span><button class="jump">PDF の該当ページへ</button></div>
+  <h2>表面由来か、内部境界由来かを見分ける</h2>
+  <p>厚い膜に平行な磁場をかけても、Meissner 効果のために内部の境界まで届かないことがある。これを使えば、表面由来の midgap 状態と内部境界由来のものを区別できるかもしれない。</p>
+</section>
+
+  </div>
+</div>
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themebtn');
+  try{var t=localStorage.getItem('theme'); if(t) root.setAttribute('data-theme',t);}catch(e){}
+  btn.onclick=function(){
+    var cur=root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+    var nx=cur==='dark'?'light':'dark'; root.setAttribute('data-theme',nx);
+    try{localStorage.setItem('theme',nx);}catch(e){}
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    if(window.renderMathInElement) renderMathInElement(document.getElementById('notes'),{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});
+  });
+  if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  var pagesEl=document.getElementById('pages'), pane=document.getElementById('pdfpane');
+  document.getElementById('file').addEventListener('change',function(ev){
+    var f=ev.target.files[0]; if(!f||!window.pdfjsLib) return;
+    f.arrayBuffer().then(function(buf){return pdfjsLib.getDocument({data:buf}).promise;}).then(async function(pdf){
+      pagesEl.innerHTML=''; document.getElementById('drop').style.display='none';
+      for(var i=1;i<=pdf.numPages;i++){
+        var page=await pdf.getPage(i), vp=page.getViewport({scale:1.6});
+        var lab=document.createElement('div'); lab.className='pagelabel'; lab.id='pg'+i; lab.textContent='PDF '+i+' ページ（p.'+(1525+i)+'）';
+        var c=document.createElement('canvas'); c.className='page'; c.width=vp.width; c.height=vp.height;
+        pagesEl.appendChild(lab); pagesEl.appendChild(c);
+        await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+      }
+    });
+  });
+  document.querySelectorAll('section.item').forEach(function(s){
+    s.querySelector('.jump').addEventListener('click',function(){
+      document.querySelectorAll('section.item.active').forEach(function(a){a.classList.remove('active')});
+      s.classList.add('active');
+      var el=document.getElementById('pg'+s.dataset.page);
+      if(!el) return;
+      if(getComputedStyle(pane).overflowY!=='visible' && pane.scrollHeight>pane.clientHeight){
+        pane.scrollTop+=el.getBoundingClientRect().top-pane.getBoundingClientRect().top-8;
+      } else { el.scrollIntoView({block:'start'}); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
