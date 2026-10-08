@@ -1,55 +1,72 @@
 <title>CuO₂面とギャップ対称性</title>
 <style>
-/* Layout: full-bleed 3D crystal with a compact control panel overlaid at top-left */
+/* Layout: full-bleed 3D stage; one collapsible control panel at top-left */
 :root{
-  --bg:#f3f5f8; --fg:#1b2230; --muted:#5b6475; --panel:rgba(255,255,255,.9); --line:#d5dae3;
+  --bg:#f3f5f8; --fg:#1b2230; --muted:#5b6475; --panel:rgba(255,255,255,.92); --line:#d5dae3;
   --cu:#2c6fbb; --o:#d9483b; --ba:#2f9e6e; --y:#c79a1e;
   --pl:#2c6fbb; --fa:#d9483b; --fb:#8e44ad; --fc:#2f9e6e;
+  --plus:#d9483b; --minus:#2c6fbb; --node:#1b2230;
   --ui:"Noto Sans JP",system-ui,sans-serif;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.9);--line:#2f3644;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.9);--line:#2f3644;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.92);--line:#2f3644;--node:#f2f4f8;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11151c;--fg:#e6e9ef;--muted:#9aa3b2;--panel:rgba(24,29,38,.92);--line:#2f3644;--node:#f2f4f8;color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--ui);overflow:hidden}
 #stage{position:fixed;inset:0}
-.panel{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:350px;max-height:calc(100% - 24px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:9px;backdrop-filter:blur(6px)}
-h1{font-size:16px;margin:0;text-wrap:balance}
+.modes{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:12px;display:flex;gap:6px}
+.modes button{font:inherit;font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+details.panel{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;max-width:min(350px,calc(100% - 24px));max-height:calc(100% - 70px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;backdrop-filter:blur(6px)}
+details.panel>summary{cursor:pointer;font-size:14px;font-weight:bold;padding:2px 0}
+.body{display:flex;flex-direction:column;gap:9px;padding-top:8px}
 h2{font-size:12px;margin:2px 0 0;color:var(--muted);letter-spacing:.04em}
 label{font-size:13px;display:flex;align-items:flex-start;gap:6px;line-height:1.45}
-input:focus-visible{outline:2px solid var(--cu);outline-offset:2px}
-p{margin:0;font-size:12.5px;line-height:1.6;color:var(--muted)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--cu);outline-offset:2px}
+p{margin:0;font-size:12.5px;line-height:1.65;color:var(--muted)}
 .lg{display:flex;gap:12px;font-size:12.5px;flex-wrap:wrap}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
 .sw{display:inline-block;width:12px;height:12px;border-radius:2px;flex:none;margin-top:3px}
-details summary{cursor:pointer;font-size:13px}
+@media (max-width:520px){.modes{top:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px))}}
 </style>
 
 <div id="stage"></div>
-<div class="panel">
-  <h1>YBa₂Cu₃O₇ の結晶とCuO₂面</h1>
-  <div class="lg">
-    <span><i class="dot" style="background:var(--cu)"></i>Cu</span>
-    <span><i class="dot" style="background:var(--o)"></i>O</span>
-    <span><i class="dot" style="background:var(--ba)"></i>Ba</span>
-    <span><i class="dot" style="background:var(--y)"></i>Y</span>
-  </div>
-  <h2>層</h2>
-  <label><input type="checkbox" id="tPl" checked><i class="sw" style="background:var(--pl)"></i>CuO₂面（超伝導を担う原子1枚分の層）</label>
-  <label><input type="checkbox" id="tOther" checked>Ba・Y・Cu–O鎖（CuO₂面の間を埋める層）</label>
-  <h2>論文に出てくる結晶の「面」</h2>
-  <label><input type="checkbox" id="tC"><i class="sw" style="background:var(--fc)"></i>ab面（c面, (001)）：c軸に垂直。CuO₂面と平行</label>
-  <label><input type="checkbox" id="tA"><i class="sw" style="background:var(--fa)"></i>a面（(100)）：a軸に垂直な側面</label>
-  <label><input type="checkbox" id="tB"><i class="sw" style="background:var(--fb)"></i>b面（(010)）：b軸に垂直な側面</label>
-  <details>
-    <summary>なぜ「2次元」と言うのか</summary>
-    <p>結晶そのものは3次元です。ただ、超伝導を担う電子はほぼCuO₂面の中だけを動き、c軸方向へはほとんど移れません。そのため電子の振る舞いは2次元的（擬2次元）になります。</p>
-  </details>
-  <details>
-    <summary>a面とb面が重要な理由</summary>
-    <p>d波ギャップは、a方向に動く電子とb方向に動く電子で符号が逆です。a面とb面に別々に電極を付けて超伝導の位相差を測ると、s波とd波を区別できます。YBCOでは、b軸方向にだけCu–O鎖が伸びているため a≠b です。</p>
-  </details>
-  <p>ドラッグで回転、ホイール／ピンチで拡大縮小。</p>
+<div class="modes" role="group" aria-label="表示する空間">
+  <button id="mReal" aria-pressed="true">実空間（結晶）</button>
+  <button id="mK" aria-pressed="false">逆空間（フェルミ面）</button>
 </div>
+<details class="panel" id="panel">
+  <summary>設定と説明</summary>
+  <div class="body" id="pReal">
+    <div class="lg">
+      <span><i class="dot" style="background:var(--cu)"></i>Cu</span>
+      <span><i class="dot" style="background:var(--o)"></i>O</span>
+      <span><i class="dot" style="background:var(--ba)"></i>Ba</span>
+      <span><i class="dot" style="background:var(--y)"></i>Y</span>
+    </div>
+    <h2>層（YBa₂Cu₃O₇）</h2>
+    <label><input type="checkbox" id="tPl" checked><i class="sw" style="background:var(--pl)"></i>CuO₂面</label>
+    <label><input type="checkbox" id="tOther" checked>Ba・Y・Cu–O鎖</label>
+    <h2>結晶の面</h2>
+    <label><input type="checkbox" id="tC"><i class="sw" style="background:var(--fc)"></i>ab面（(001)）：CuO₂面と平行</label>
+    <label><input type="checkbox" id="tA"><i class="sw" style="background:var(--fa)"></i>a面（(100)）：a軸に垂直</label>
+    <label><input type="checkbox" id="tB"><i class="sw" style="background:var(--fb)"></i>b面（(010)）：b軸に垂直</label>
+    <p>電子はほぼCuO₂面の中だけを動くので、電子にとっては2次元的。</p>
+  </div>
+  <div class="body" id="pK" hidden>
+    <div class="lg">
+      <span><i class="dot" style="background:var(--plus)"></i>Δ＞0</span>
+      <span><i class="dot" style="background:var(--minus)"></i>Δ＜0</span>
+      <span>白に近いほど |Δ| が小さい</span>
+    </div>
+    <label><input type="checkbox" id="tLobe" checked>ギャップの大きさ（k_c=0 の断面）</label>
+    <label><input type="checkbox" id="tNode" checked>節線（ノード）</label>
+    <label><input type="checkbox" id="tBZ" checked>ブリルアンゾーン</label>
+    <p>円筒：フェルミ面。電子がc方向に動けないので、エネルギーがk_cにほぼ依存せず、断面の円がそのままk_c方向に伸びる。</p>
+    <p>色：Δ ∝ cos k_a a − cos k_b b（≈ k_a² − k_b²）。k_a方向で＋、k_b方向で−。</p>
+    <p>黒線：45°方向ではΔ=0。円筒上では点ではなく、k_cに沿った線になる＝節線。</p>
+    <p>簡略化のため、フェルミ面をゾーン中心の円筒で描いている。</p>
+  </div>
+</details>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -65,67 +82,90 @@ const camera=new THREE.PerspectiveCamera(38,1,0.1,400);
 camera.up.set(0,0,1);
 const controls=new THREE.OrbitControls(camera,renderer.domElement);
 controls.enableDamping=true;
-scene.add(new THREE.AmbientLight(0xffffff,.55));
-const dl=new THREE.DirectionalLight(0xffffff,.75); dl.position.set(10,-14,20); scene.add(dl);
+scene.add(new THREE.AmbientLight(0xffffff,.6));
+const dl=new THREE.DirectionalLight(0xffffff,.7); dl.position.set(10,-14,20); scene.add(dl);
 
-// YBa2Cu3O7 (Pmmm), lattice constants in Å
-const A=3.82,B=3.89,Cc=11.68, NX=2, NY=2;
-const basis=[
- ['Y',.5,.5,.5],['Ba',.5,.5,.184],['Ba',.5,.5,.816],
- ['Cu1',0,0,0],['Cu2',0,0,.355],['Cu2',0,0,.645],
- ['O1',0,.5,0],                                   // chain oxygen (along b)
- ['O2',.5,0,.378],['O2',.5,0,.622],['O3',0,.5,.377],['O3',0,.5,.623], // CuO2-plane oxygen
- ['O4',0,0,.159],['O4',0,0,.841]];                // apical oxygen
-const atoms=[], eps=1e-6;
+function label(t,col,w=2.5){const c=document.createElement('canvas');c.width=160;c.height=64;const x=c.getContext('2d');x.font='bold 40px sans-serif';x.fillStyle=col;x.textAlign='center';x.textBaseline='middle';x.fillText(t,80,32);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));sp.scale.set(w,w*.4,1);return sp}
+function axes(group,O,list,head,size){list.forEach(([d,t,L])=>{group.add(new THREE.ArrowHelper(d,O,L,C('--fg'),head,head*.55));const l=label(t,hex('--fg'),size);l.position.copy(O).addScaledVector(d,L+size*.4);group.add(l)})}
+const X=new THREE.Vector3(1,0,0),Y=new THREE.Vector3(0,1,0),Z=new THREE.Vector3(0,0,1);
+
+/* ===== Real space: YBa2Cu3O7 (Pmmm), Å ===== */
+const real=new THREE.Group(); scene.add(real);
+const A=3.82,B=3.89,Cc=11.68,NX=2,NY=2;
+const basis=[['Y',.5,.5,.5],['Ba',.5,.5,.184],['Ba',.5,.5,.816],['Cu1',0,0,0],['Cu2',0,0,.355],['Cu2',0,0,.645],
+ ['O1',0,.5,0],['O2',.5,0,.378],['O2',.5,0,.622],['O3',0,.5,.377],['O3',0,.5,.623],['O4',0,0,.159],['O4',0,0,.841]];
+const atoms=[],eps=1e-6;
 for(let i=-1;i<=NX;i++)for(let j=-1;j<=NY;j++)for(let k=-1;k<=1;k++)for(const [t,x,y,z] of basis){
   const fx=x+i,fy=y+j,fz=z+k;
   if(fx<-eps||fx>NX+eps||fy<-eps||fy>NY+eps||fz<-eps||fz>1+eps)continue;
   atoms.push({t,p:new THREE.Vector3(fx*A,fy*B,fz*Cc)});
 }
-const center=new THREE.Vector3(NX*A/2,NY*B/2,Cc/2);
-controls.target.copy(center);
-camera.position.set(center.x+22,center.y-26,center.z+10);
-
+const rc=new THREE.Vector3(NX*A/2,NY*B/2,Cc/2);
 const mat=n=>new THREE.MeshStandardMaterial({color:C(n),roughness:.4});
 const M={Cu:mat('--cu'),O:mat('--o'),Ba:mat('--ba'),Y:mat('--y')};
 const G={Cu:new THREE.SphereGeometry(.42,24,16),O:new THREE.SphereGeometry(.3,20,12),Ba:new THREE.SphereGeometry(.62,24,16),Y:new THREE.SphereGeometry(.55,24,16)};
-const planeG=new THREE.Group(), otherG=new THREE.Group(); scene.add(planeG,otherG);
+const planeG=new THREE.Group(),otherG=new THREE.Group(); real.add(planeG,otherG);
 const inPlane=a=>a.t==='Cu2'||a.t==='O2'||a.t==='O3';
 for(const a of atoms){const el=a.t.replace(/\d/,'');const m=new THREE.Mesh(G[el],M[el]);m.position.copy(a.p);(inPlane(a)?planeG:otherG).add(m)}
-// Cu–O bonds (< 2.1 Å)
 const bondM=new THREE.MeshStandardMaterial({color:0x9aa3b2,roughness:.6});
 for(const c of atoms)if(c.t.startsWith('Cu'))for(const o of atoms)if(o.t.startsWith('O')){
-  const d=c.p.distanceTo(o.p); if(d>2.1)continue;
+  const d=c.p.distanceTo(o.p);if(d>2.1)continue;
   const v=new THREE.Vector3().subVectors(o.p,c.p);
   const m=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,d,8),bondM);
-  m.position.copy(c.p).addScaledVector(v,.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),v.normalize());
+  m.position.copy(c.p).addScaledVector(v,.5);m.quaternion.setFromUnitVectors(Y,v.normalize());
   (inPlane(c)&&inPlane(o)?planeG:otherG).add(m);
 }
-// translucent sheets marking the two CuO2 planes
 const sheetM=new THREE.MeshBasicMaterial({color:C('--pl'),transparent:true,opacity:.18,side:THREE.DoubleSide,depthWrite:false});
-for(const z of [.36,.64]){const s=new THREE.Mesh(new THREE.PlaneGeometry(NX*A+1.2,NY*B+1.2),sheetM);s.position.set(center.x,center.y,z*Cc);planeG.add(s)}
-
-// cell outline
+for(const z of [.36,.64]){const s=new THREE.Mesh(new THREE.PlaneGeometry(NX*A+1.2,NY*B+1.2),sheetM);s.position.set(rc.x,rc.y,z*Cc);planeG.add(s)}
 const box=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(NX*A,NY*B,Cc)),new THREE.LineBasicMaterial({color:C('--muted')}));
-box.position.copy(center);scene.add(box);
+box.position.copy(rc);real.add(box);
+function face(w,h,col,pos,rot){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:C(col),transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false}));m.position.copy(pos);m.rotation.set(...rot);m.visible=false;real.add(m);return m}
+const fC=face(NX*A,NY*B,'--fc',new THREE.Vector3(rc.x,rc.y,Cc+.02),[0,0,0]);
+const fA=face(Cc,NY*B,'--fa',new THREE.Vector3(NX*A+.02,rc.y,rc.z),[0,Math.PI/2,0]);
+const fB=face(NX*A,Cc,'--fb',new THREE.Vector3(rc.x,-.02,rc.z),[Math.PI/2,0,0]);
+axes(real,new THREE.Vector3(-2,-2,0),[[X,'a軸',NX*A+3],[Y,'b軸',NY*B+3],[Z,'c軸',Cc+2]],.7,2.5);
 
-// crystal faces
-function face(w,h,col,pos,rot){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:C(col),transparent:true,opacity:.32,side:THREE.DoubleSide,depthWrite:false}));m.position.copy(pos);m.rotation.set(...rot);m.visible=false;scene.add(m);return m}
-const fC=face(NX*A,NY*B,'--fc',new THREE.Vector3(center.x,center.y,Cc+.02),[0,0,0]);
-const fA=face(Cc,NY*B,'--fa',new THREE.Vector3(NX*A+.02,center.y,center.z),[0,Math.PI/2,0]);
-const fB=face(NX*A,Cc,'--fb',new THREE.Vector3(center.x,-.02,center.z),[Math.PI/2,0,0]);
+/* ===== Reciprocal space: cylindrical Fermi surface with d-wave gap ===== */
+const kspace=new THREE.Group(); scene.add(kspace);
+const P=Math.PI, kF=2.0, H=P*1.0; // k in units of 1/a; k_c from -H to H
+const cp=C('--plus'),cm=C('--minus'),white=new THREE.Color(0xffffff);
+const gapAt=phi=>Math.cos(kF*Math.cos(phi))-Math.cos(kF*Math.sin(phi)); // cos k_a a − cos k_b a on the circle
+let gmax=0;for(let i=0;i<360;i++)gmax=Math.max(gmax,Math.abs(gapAt(i*P/180)));
+const gcol=v=>white.clone().lerp(v>=0?cp:cm,Math.min(1,Math.abs(v)/gmax));
+{ // cylinder with vertex colors
+  const np=240,nz=2,pos=[],col=[],idx=[];
+  for(let j=0;j<=nz;j++)for(let i=0;i<=np;i++){const ph=2*P*i/np,z=-H+2*H*j/nz;pos.push(kF*Math.cos(ph),kF*Math.sin(ph),z);const c=gcol(gapAt(ph));col.push(c.r,c.g,c.b)}
+  for(let j=0;j<nz;j++)for(let i=0;i<np;i++){const a=j*(np+1)+i,b=a+np+1;idx.push(a,a+1,b,a+1,b+1,b)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();
+  kspace.add(new THREE.Mesh(g,new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide,transparent:true,opacity:.9})));
+}
+// gap magnitude at k_c=0: radial lobes r = kF + s·|Δ|
+const lobe=new THREE.Group();kspace.add(lobe);
+for(const sign of [1,-1]){const pts=[];for(let i=0;i<=720;i++){const ph=2*P*i/720,v=gapAt(ph);const r=v*sign>0?kF+1.6*Math.abs(v)/gmax:kF;pts.push(new THREE.Vector2(r*Math.cos(ph),r*Math.sin(ph)))}
+  const shape=new THREE.Shape(pts);shape.holes.push(new THREE.Path().absarc(0,0,kF-.001,0,2*P,true));
+  const m=new THREE.Mesh(new THREE.ShapeGeometry(shape,200),new THREE.MeshBasicMaterial({color:sign>0?cp:cm,transparent:true,opacity:.55,side:THREE.DoubleSide,depthWrite:false}));lobe.add(m)}
+// node lines along k_c at 45°, 135°, 225°, 315°
+const nodes=new THREE.Group();kspace.add(nodes);
+const nodeM=new THREE.MeshBasicMaterial({color:C('--node')});
+for(let q=0;q<4;q++){const ph=P/4+q*P/2;const m=new THREE.Mesh(new THREE.CylinderGeometry(.045,.045,2*H,8),nodeM);m.rotation.x=P/2;m.position.set(kF*Math.cos(ph)*1.005,kF*Math.sin(ph)*1.005,0);nodes.add(m)}
+const nl=label('節線',hex('--fg'),1.6);nl.position.set(kF*Math.cos(P/4)+.6,kF*Math.sin(P/4)+.6,H+.3);nodes.add(nl);
+// Brillouin zone prism
+const bz=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2*P,2*P,2*H)),new THREE.LineBasicMaterial({color:C('--muted')}));kspace.add(bz);
+axes(kspace,new THREE.Vector3(0,0,0),[[X,'k_a',P+1.2],[Y,'k_b',P+1.2],[Z,'k_c',H+1.2]],.35,1.6);
 
-// axes with labels
-function label(t,col){const c=document.createElement('canvas');c.width=160;c.height=64;const x=c.getContext('2d');x.font='bold 40px sans-serif';x.fillStyle=col;x.textAlign='center';x.textBaseline='middle';x.fillText(t,80,32);const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));sp.scale.set(2.5,1,1);return sp}
-const O=new THREE.Vector3(-2,-2,0);
-[[1,0,0,'a軸',NX*A+3],[0,1,0,'b軸',NY*B+3],[0,0,1,'c軸',Cc+2]].forEach(([x,y,z,t,L])=>{
-  const d=new THREE.Vector3(x,y,z);scene.add(new THREE.ArrowHelper(d,O,L,C('--fg'),.7,.38));
-  const l=label(t,hex('--fg'));l.position.copy(O).addScaledVector(d,L+1);scene.add(l);
-});
-
+/* ===== UI ===== */
 const bind=(id,fn)=>{const e=document.getElementById(id);e.onchange=()=>fn(e.checked);fn(e.checked)};
-bind('tPl',v=>planeG.visible=v); bind('tOther',v=>otherG.visible=v);
-bind('tC',v=>fC.visible=v); bind('tA',v=>fA.visible=v); bind('tB',v=>fB.visible=v);
+bind('tPl',v=>planeG.visible=v);bind('tOther',v=>otherG.visible=v);
+bind('tC',v=>fC.visible=v);bind('tA',v=>fA.visible=v);bind('tB',v=>fB.visible=v);
+bind('tLobe',v=>lobe.visible=v);bind('tNode',v=>nodes.visible=v);bind('tBZ',v=>bz.visible=v);
+function setMode(k){real.visible=!k;kspace.visible=k;
+  document.getElementById('mReal').setAttribute('aria-pressed',!k);document.getElementById('mK').setAttribute('aria-pressed',k);
+  document.getElementById('pReal').hidden=k;document.getElementById('pK').hidden=!k;
+  if(k){controls.target.set(0,0,0);camera.position.set(9,-11,7)}else{controls.target.copy(rc);camera.position.set(rc.x+22,rc.y-26,rc.z+10)}}
+document.getElementById('mReal').onclick=()=>setMode(false);
+document.getElementById('mK').onclick=()=>setMode(true);
+setMode(false);
+if(innerWidth>720)document.getElementById('panel').open=false;
 
 function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();scene.background=C('--bg')}
 addEventListener('resize',resize);resize();
